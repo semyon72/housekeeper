@@ -1,0 +1,78 @@
+
+{%- macro buttonA(path, params={}, imageUrl,  otherContent = '', a_class = null, img_class = null, title = null ) -%}
+{% set a_class = a_class is null ? 'py-0 px-2 mx-1' : a_class %}
+{% set img_class = img_class is null ? 'my-2' : img_class %}
+<a href="{{  path|slice(0,1) != '#' ? path( path, params ) : path|slice(1) }}" {{ title ? ('title="'~title~'" ')|raw }}class="btn btn-outline-primary {{ a_class }}"><img {{ title ? ('title="'~title~'" ')|raw }}class="{{ img_class }}" src="{{ imageUrl }}" width="16" height="16"/>{%- if otherContent is not empty -%}{{ otherContent }}{% endif %}</a>
+{% endmacro %}
+
+
+{% macro addButton(addButtonPath, buttonParams = {}, class='ml-auto') %}
+{% import _self as self %}
+<div class="col-auto d-flex align-items-start {{ class }}">
+{{ self.buttonA(addButtonPath, buttonParams, "/icoset/png/24x24/Add.png", ' Add more !?', '', '') }}
+</div>
+{% endmacro %}
+
+
+{% macro buttonsEditDelete(editPath, editParams, deletePath, deleteParams, otherContent = '') %}
+{% import _self as self %}
+<div class="d-flex flex-row align-items-start justify-content-center">
+    {{ self.buttonA( editPath, editParams, "/icoset/png/24x24/Modify.png",'',null,null,'Edit' ) }}
+    {{ self.buttonA( deletePath, deleteParams, "/icoset/png/24x24/Delete.png",'',null,null,'Delete' ) }}
+    {%- if otherContent is not empty -%}{{ otherContent }}{% endif %}
+</div>
+{% endmacro %}
+
+{% macro contentBetween(firstContent, secondContent ) %}
+<div class="row my-2">
+    {% if firstContent %}
+    <div class="col-auto">
+        {{ firstContent|raw }}
+    </div>
+    {% endif %}
+    {% if secondContent %}
+    <div class="col-auto ml-auto row">
+        {{ secondContent|raw }}
+    </div>
+    {% endif %}
+</div>    
+{% endmacro %}
+
+{% macro pageTitle(title, otherContent = '' ) %}
+{% import _self as self %}
+{{ self.contentBetween("<h4 class=\"page-title\">#{ title }</h4>", otherContent ?: '' ) }}
+{% endmacro %}
+
+
+{% macro pageTitleWithAddButton(title, addButtonPath, buttonParams = {}) %}
+{% import _self as self %}
+{{ self.pageTitle(title, addButtonPath is not empty ? self.addButton(addButtonPath, buttonParams) : '' )  }}
+{% endmacro %}
+
+
+{%  macro faButtonSubmit(faIcon = 'fa-save', buttonText = '', class = 'btn-outline-primary', forFormId = '')  %}
+<button type="submit" {% if forFormId is not empty %}form="{{ forFormId }}" {% endif %}class="btn{% if class is not empty -%}{{ ' '~class }}{% endif %}">{%- if buttonText is not empty -%}{{ buttonText }}{% endif %}
+    <span class="fa {{faIcon}}"></span>
+</button>
+{% endmacro %}
+
+
+{%- macro faButtonSaveSubmit(faIcon = 'fa-save', buttonText = '', class = 'btn-outline-primary') -%}
+{% import _self as self %}
+    {{ self.faButtonSubmit(faIcon, buttonText, class) }}
+{% endmacro %}
+
+
+{%- macro faButtonA(path, params={}, faIcon = '', target = '', text = '') -%}
+    <a href="{{  path( path, params ) }}" {% if target is not empty %}target="{{ target }}" {%  endif %}class="btn btn-outline-primary"><span class="fa{{ ' '~faIcon }}"></span>{{ text ? " #{text}" : '' }}</a>
+{% endmacro %}
+
+
+{% macro faButtonsSaveEditDelete(editPath, editParams, deletePath, deleteParams) %}
+{% import _self as self %}
+<div class="ml-auto my-2 mr-2">
+    {{ self.faButtonSaveSubmit() }}
+    {{ self.faButtonA(editPath, editParams, 'fa-edit') }}
+    {{ self.faButtonA(deletePath, deleteParams, 'fa-trash-alt') }}
+</div>
+{% endmacro %}

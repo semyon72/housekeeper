@@ -1,0 +1,69 @@
+{% block filter %}
+{% set AllowableElementsAndAdditionalClasses = {'dateB': 2, 'dateE': 2, 'place': 4, 'service': 4} %}
+{% if attribute(filter_form, 'place') is defined and attribute(filter_form, 'dateB') is not defined
+  and attribute(filter_form, 'dateE') is not defined and attribute(filter_form, 'service') is not defined %}
+    {% set AllowableElementsAndAdditionalClasses = { 'place': 12 } %}
+{% endif %}    
+{% set filterApplied = false %}
+{% set break = false %}
+{% for elemName in AllowableElementsAndAdditionalClasses|keys if not break %}
+    {% if attribute(filter_form, elemName) is defined and attribute(filter_form, elemName).vars.value is not empty %}
+    {% set filterApplied = true %}
+    {% set break = true %}
+    {% endif %}
+{% endfor %}
+
+<div class="row flex-wrap mb-2">
+    <div class="col-5">
+        <button class="btn {% if filterApplied %}btn-warning{% elseif not filter_form.vars.valid %}btn-danger{% else %}btn-primary{% endif %}" type="button" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+          Show/hide filter options {% if filterApplied %}[filter applied]{% endif %} <span class="fa fa-filter"></span>
+        </button>
+    </div>
+    {% if filterApplied %}   
+    <div class="col-7 d-flex">
+        <button class="btn btn-danger ml-auto mx-1" type="button" name="reset_filter">
+          Reset filter options <span class="fa fa-times"></span>
+        </button>
+    </div>
+    {% endif %} 
+</div>
+<div class="collapse {% if not filter_form.vars.valid %}show {%endif%}mb-2" id="collapseFilter">
+    <div class="card card-body">
+        <div class="row">
+            {{ form_start(filter_form,{'attr': {'class': 'w-100'}}) }}
+            {{ form_errors(filter_form) }}
+                <div class="form-row">
+            {% for elemName, element in filter_form %}
+                {% if elemName in AllowableElementsAndAdditionalClasses|keys %} 
+                    <div class="form-group{% if attribute(AllowableElementsAndAdditionalClasses, elemName) is defined %} col-sm-{{ attribute(AllowableElementsAndAdditionalClasses, elemName) }}{% endif %}">
+                    {{ form_label(element) }}
+                    {{ form_widget(element) }}        
+                    </div>
+                {% endif %}
+            {% endfor %}        
+                </div>
+                <div class="form-row justify-content-end ml-auto">
+                    <button type="submit" class="btn btn-primary mx-2">Apply filter <span class="fa fa-filter"></span></button>
+                </div>
+            {{ form_end(filter_form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts  %}
+<script type="text/javascript">
+    (function ($){
+        $(document).ready(function(){
+            $('button[name="reset_filter"]').on('click',function($event){
+                $('form[name="{{ filter_form.vars.name }}"]').find(":input").each(function(index){
+                    if ( ($(this).is("input") && this.type !== 'hidden') || $(this).is("select") ){
+                        console.log(this);
+                        $(this).val('');
+                    }
+                }).end().find('[type="submit"]').trigger( "click" );
+            });
+        });
+    })(jQuery)
+</script>
+{% endblock %}

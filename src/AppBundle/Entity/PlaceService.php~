@@ -1,0 +1,56 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * PlaceService
+ *
+ * @ORM\Table(name="place_service", uniqueConstraints={@ORM\UniqueConstraint(name="uix_placeId_serviceId", columns={"place_id", "service_id"})}, indexes={@ORM\Index(name="service_id", columns={"service_id"}), @ORM\Index(name="payment_info", columns={"payment_info"}), @ORM\Index(name="IDX_D5518D29DA6A219", columns={"place_id"})})
+ * @ORM\Entity
+ */
+class PlaceService
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var \Place
+     *
+     * @ORM\ManyToOne(targetEntity="Place")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="place_id", referencedColumnName="id")
+     * })
+     */
+    private $place;
+
+    /**
+     * @var \Service
+     *
+     * @ORM\ManyToOne(targetEntity="Service")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="service_id", referencedColumnName="id")
+     * })
+     */
+    private $service;
+
+    /**
+     * @var \PaymentInfo
+     *
+     * @ORM\ManyToOne(targetEntity="PaymentInfo")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="payment_info", referencedColumnName="id")
+     * })
+     */
+    private $paymentInfo;
+
+
+}
+

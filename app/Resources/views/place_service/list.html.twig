@@ -1,0 +1,93 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% use 'filter/filter_form.html.twig' with javascripts as filter_javascripts, filter as from_to_place_service_filter %}
+
+{% set titleValue = 'Place\'s service list' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+{{ contentMacros.pageTitleWithAddButton(titleValue,'placeService_newEdit') }}
+{{ block('from_to_place_service_filter') }}    
+{{ form_start(mark_for_receipt_form) }}
+{{ form_errors(mark_for_receipt_form) }}
+<table class="table table-sm table-hover">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Place description</th>
+        <th scope="col">Service's description</th>
+        <th scope="col">Payment information</th>
+        <th scope="col" class="text-center">Action</th>
+        <th scope="col">Check</th>
+    </tr>
+{% if placeServices %} 
+{% for placeService in placeServices %}
+    <tr>
+        <th scope="row">{{ loop.index }}</td>
+        <td>{{ placeService.place.name }}</td>
+        <td>{{ placeService.service.name }}</td>
+        <td>
+            {% if placeService.paymentInfo %}
+            {%- set popoverContent -%}
+                <div>
+                    <div>
+                        <address>
+                            <strong>Country:&nbsp;</strong>{{ placeService.paymentInfo.country }}<br />
+                            <strong>City:&nbsp;</strong>{{ placeService.paymentInfo.city }}<br />
+                            <strong>Street:&nbsp;</strong>{{ placeService.paymentInfo.street }}<br />
+                            <strong>House:&nbsp;</strong>{{ placeService.paymentInfo.house }}<br />
+                            <strong>Apartment:&nbsp;</strong>{{ placeService.paymentInfo.apartment }}
+                        </address>
+                        
+                        <strong>IBAN:&nbsp;</strong><br />{{ placeService.paymentInfo.iban }}<br />
+                        <strong>Priority:&nbsp;</strong>{{ placeService.paymentInfo.priority }}
+                    </div>
+                </div>    
+            {%- endset -%}
+            {%- set popoverTitle -%}
+            <em>{{ placeService.paymentInfo.firstName~', '~placeService.paymentInfo.lastName }}</em>    
+            {%- endset -%}
+            <button type="button" class="btn btn-sm btn-info" data-placement="bottom" data-toggle="popover" title="{{ popoverTitle }}" data-content="{{ popoverContent }}">Show more information</button>
+            {% else %}
+            &nbsp;
+            {% endif %}
+        </td>
+        <td>
+            {{ contentMacros.buttonsEditDelete('placeService_newEdit',{'id': placeService.id},'placeService_delete',{'id': placeService.id}) }}            
+        </td>
+        <td class="text-center">
+            <div class="form-check">
+                {% for mark_entry in mark_for_receipt_form.placeServiceMarkForReceipt %}
+                    {% if mark_entry.vars.value.placeService == placeService.id %}
+                        {{ form_widget(mark_entry.placeService) }}
+                        {{ form_widget(mark_entry.place) }}
+                        {{ form_widget(mark_entry.service) }}
+                        {{ form_widget(mark_entry.mark) }}
+                    {% endif %}
+                {% endfor %}    
+            </div>
+        </td>
+    </tr>
+{% endfor %}
+{% else %}
+    <tr>
+        <td colspan="6" style="text-align: center">Services for places' data is empty</td>
+    </tr>
+{% endif %}
+</table>
+{{ form_widget(mark_for_receipt_form.prepare,{'attr': {'class':'btn btn-primary float-right'} }) }}
+{{ form_end(mark_for_receipt_form) }}
+{% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ block('filter_javascripts') }}
+    <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+                $('[data-toggle="popover"]').popover({'html': true})
+            })
+        })(jQuery);
+    </script>
+{% endblock %}

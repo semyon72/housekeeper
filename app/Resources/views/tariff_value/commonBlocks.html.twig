@@ -1,0 +1,14 @@
+{% block currentTariffMessage %} 
+<div class="alert alert-info" role="alert">
+    {% set currentTariffMessaage %}
+        {% if currentTariff is defined and currentTariff %}
+            {{ ('<strong>' ~ currentTariff.unitName|e ~ '</strong>' ~ ' of ' ~ '<strong>' ~ currentTariff.service.name|e ~ '</strong>' ~ ' service at ' ~ '<strong>' ~ currentTariff.place.name|e ~ '</strong>' ~ ' place.')|raw }}
+            <br/>
+            {{ ( currentTariff.dateE is not null ? 'Was' : 'Still') ~ ' active from ' ~ currentTariff.dateB|date('d.m.Y H:i:s')|e ~ ( currentTariff.dateE is not null ?  ' up to ' ~ currentTariff.dateE|date('d.m.Y H:i:s')|e  ) }}
+        {% else %}
+            NOT VALID
+        {% endif %}
+    {% endset %}
+    <cite>Current tariff is - {{ currentTariffMessaage|trim|raw }}</cite>
+</div>
+{% endblock currentTariffMessage %}

@@ -1,0 +1,20 @@
+{% extends "login/base.html.twig" %}
+
+{% block title %}Email &lt;{{ email }}&gt; is confirmed successfully{% endblock %}
+
+{% block page_header %}Congratulation{% endblock %}
+
+{% block body %}
+<p>Your Email was confirmed successfully. Now, you need only to login.</p>
+<a href="{{ path('login_signin') }}">Click this link and you will be redirected on sign in form.</a>
+<p>
+    Or waiting while you will redirected automatically if your browser supports JavaScript 
+</p>
+{% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        //window.location.href = {{ absolute_url(path('login_signin')) }}
+    </script>
+{% endblock javascripts %}

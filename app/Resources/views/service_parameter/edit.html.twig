@@ -1,0 +1,22 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="alert alert-info" role="alert">
+    <cite>Current service is - "{{ service is defined and service is not null ? service.name : 'not valid' }}"</cite>
+</div>
+{{ form_start(form) }}
+{{ form_errors(form) }}
+<fieldset class="border p-2">
+    <legend class="w-auto">Parameter of service information</legend>
+    <div class="form-group">
+    {{ form_label(form.parameter) }}
+    {{ form_widget(form.parameter) }}
+    </div>
+    {{ form_widget(form.service) }}
+    <div class="form-group">
+    {{ form_widget(form.save)  }}    
+    </div>
+</fieldset>
+{{ form_end(form) }} 
+{% endblock %}

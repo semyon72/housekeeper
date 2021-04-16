@@ -1,0 +1,47 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% set titleValue = 'Counter list' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% use 'filter/filter_form.html.twig' with javascripts as filter_javascripts, filter as from_to_place_service_filter %}
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+{{ contentMacros.pageTitleWithAddButton(titleValue,'counter_newEdit') }}
+{{ block('from_to_place_service_filter') }}    
+<table class="table table-sm table-hover">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Place description</th>
+        <th scope="col">Service's description</th>
+        <th scope="col">Value</th>
+        <th scope="col">Value' name</th>
+        <th scope="col">On date</th>
+        <th scope="col" class="text-center">Action</th>
+    </tr>
+{% if counters %} 
+{% for counter in counters %}
+    <tr>
+        <th scope="row">{{ loop.index }}</td>
+        <td>{{ counter.place.name }}</td>
+        <td>{{ counter.service.name }}</td>
+        <td>{{ counter.value }}</td>
+        <td>{{ counter.valueName }}</td>
+        <td>{{ counter.onDate is empty ? "" : counter.onDate|date("d.m.Y:H:i:s") }}</td>
+        <td>
+            {{ contentMacros.buttonsEditDelete('counter_newEdit',{'id': counter.id},'counter_delete',{'id': counter.id}) }}            
+        </td>
+    </tr>
+{% endfor %}
+{% else %}
+    <tr>
+        <td colspan="7" style="text-align: center">Counters' data is empty</td>
+    </tr>
+{% endif %}
+</table>
+{% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ block('filter_javascripts') }}
+{% endblock %}

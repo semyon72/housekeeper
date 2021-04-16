@@ -1,0 +1,83 @@
+# To get started with security, check out the documentation:
+# https://symfony.com/doc/current/security.html
+security:
+
+    # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
+    providers:
+        in_memory:
+            memory:
+                users:
+                    'foo@foo.com':                 
+                        password: foo
+                        roles: [ROLE_USER]
+                        
+        db_provider:
+# next row if AppBundle\Entity\UserRepository doesn't implements Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface 
+#            entity: { class: AppBundle\Entity\User, property: email }
+            entity: { class: AppBundle\Entity\User }
+            
+    encoders:
+        AppBundle\Entity\User:
+            id: AppBundle\Classes\UserPasswordEncoder
+             
+#        Symfony\Component\Security\Core\User\User: plaintext
+        
+#            
+#    access_control:
+#        - { path: '^/login', roles: IS_AUTHENTICATED_ANONYMOUSLY }
+#        - { path: '^/', roles: IS_AUTHENTICATED_FULLY }
+#            
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+            
+        housekeeper_utils:
+            pattern: ^/utils
+            security: false     
+
+        housekeeper_login:
+            pattern: ^/login
+            anonymous: ~     
+            context: my_context
+            provider: db_provider
+            form_login:
+                username_parameter: email
+                password_parameter: pass
+                login_path: login_signin
+                check_path: login_signin
+                always_use_default_target_path: true
+                default_target_path: '%login_form_default_target_path%'
+                
+            logout:
+                path: login_signout
+                target: login_signin  
+                
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 2592000 # 30 days in seconds                
+                
+            
+        housekeeper_authorized:
+#            anonymous: ~
+            context: my_context
+            pattern: ~
+            provider: db_provider
+            form_login:
+                username_parameter: email
+                password_parameter: pass
+                login_path: login_signin
+                check_path: login_signin
+                always_use_default_target_path: true
+                default_target_path: '%login_form_default_target_path%'
+            
+        main:
+            anonymous: ~
+            # activate different ways to authenticate
+
+            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+            #http_basic: ~
+
+            # https://symfony.com/doc/current/security/form_login_setup.html
+            #form_login: ~            

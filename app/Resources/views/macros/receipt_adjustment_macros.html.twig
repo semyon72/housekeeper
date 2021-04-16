@@ -1,0 +1,222 @@
+{% macro ReceiptInfoRow(receipt) %}
+<tr>
+    <td>{{ receipt.valueB }}</td>
+    <td>{{ receipt.valueE }}</td>
+    <td>{{ receipt.value }}</td>
+    <td>{{ receipt.total }}</td>
+    <td>{{ receipt.dateB|date('Y-M-d H:i:s') }}</td>
+    <td>{{ receipt.dateE|date('Y-M-d H:i:s') }}</td>
+</tr>
+{% endmacro ReceiptInfoRow  %}
+
+{% macro TariffInfoRow(tariff) %}
+<tr>
+    <td colspan="6">
+    <div class="row">
+        <div class="col-auto"><strong>Place: </strong>{{ tariff.place.name }}</div>
+        <div class="col-auto"><strong>Service: </strong>{{ tariff.service.name }}</div>
+        <div class="col-auto"><strong>Tariff: </strong>{{ "( " ~ tariff.unitValue ~ ' per ' ~ tariff.unitName ~ " )" }}</div>
+    </div>
+    </td>
+</tr>
+{% endmacro TariffInfoRow %}
+
+
+{% macro CallbackByName(params,callBackName) %}
+    {% set result = '' %}
+    {% if callBackName == 'ShowReceiptInfo' and _self.ShowReceiptInfo is defined %}
+        {% set result = _self.ShowReceiptInfo(params) %} 
+    {% elseif  callBackName == 'ShowTariffInfo' and _self.ShowTariffInfo is defined  %}
+        {% set result = _self.ShowTariffInfo(params) %} 
+    {% elseif  callBackName == 'ShowAdjustmentNote' and _self.ShowAdjustmentNote is defined  %}
+        {% set result = _self.ShowAdjustmentNote(params) %}
+    {% elseif  callBackName == 'AdjustmentInfoTableHeaderRow' and _self.AdjustmentInfoTableHeaderRow is defined  %}
+        {% set result = _self.AdjustmentInfoTableHeaderRow(params) %}
+    {% endif %}
+    {{ result }}
+{% endmacro CallbackByName %}
+
+{% macro ShowReceiptInfo(params) %}
+    {% set adjustment, createReceiptModalBody = params.adjustment, params.createReceiptModalBody %}
+    <a href="#receiptAdjustmentsInfoRows_ReceiptInfo_{{ adjustment.receipt.id }}" class="badge badge-info" data-toggle="modal">Receipt</a>
+    {%- if createReceiptModalBody == true -%} 
+    <div id="receiptAdjustmentsInfoRows_ReceiptInfo_{{ adjustment.receipt.id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Receipt information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                {{- _self.ReceiptInfo(adjustment.receipt,false) -}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a href="{{ path('receipt_newEdit', {'id': adjustment.receipt.id}) }}" class="btn btn-primary">Go to edit the receipt</a>
+                </div>                            
+            </div>
+        </div>
+    </div>
+    {%- endif -%}
+{% endmacro %}
+
+
+{% macro ShowTariffInfo(adjustment) %}
+    {%- set tariffInfo ='' -%}
+    {%- if adjustment.tariff -%}
+    {%- set tooltipTitle -%}
+        <b>Place: </b> {{ adjustment.tariff.place.name }}<br />
+        <b>Service: </b> {{ adjustment.tariff.service.name }}<br />
+        <b>Value: </b> {{ adjustment.tariff.unitValue~' per '~adjustment.tariff.unitName }}
+    {%- endset -%}
+    {%- set tariffInfo -%}
+        <span class="badge badge-info" data-toggle="tooltip" data-placement="left" data-html="true" title="{{ tooltipTitle|escape('html') }}">Tariff</span>
+    {%- endset -%}
+    {%- endif -%}    
+    {{ tariffInfo }}
+{% endmacro ShowTariffInfo %}
+
+
+{% macro ShowAdjustmentNote(adjustment) %}
+    {%- set adjustmentNote ='' -%}
+    {%- if adjustment.note -%}
+    {%- set adjustmentNote -%}
+        <span class="badge badge-info" data-toggle="tooltip" data-placement="left" title="{{ adjustment.note|escape('html') }}">Notes</span>
+    {%- endset -%}
+    {%- endif -%}
+    {{ adjustmentNote }}
+{% endmacro ShowAdjustmentNote %}
+
+    
+{% macro AdjustmentInfoRow(adjustment, loopIndex, currentAdjustmentId, showReceiptInfo, createReceiptModalBody, otherCells = [] ) %}
+{% import _self as self %}
+{% from 'macros/content_macros.html.twig' import buttonsEditDelete %}
+<tr{% if currentAdjustmentId and currentAdjustmentId > 0 and adjustment.id == currentAdjustmentId %} class="table-primary"{% endif %}>
+    <th scope="row">{{ loopIndex }}</th>
+    <td>{{ adjustment.valueB }}</td>
+    <td>{{ adjustment.valueE }}</td>
+    <td>{{ adjustment.value }}</td>
+    <td class="text-right">{{ adjustment.total }}</td>
+    <td>{{ adjustment.dateB|date('Y-m-d H:i:s') }}</td>
+    <td>{{ adjustment.dateE|date('Y-m-d H:i:s') }}</td>
+    <td class="text-center">
+        {% set tariffInfo = _self.CallbackByName( adjustment, 'ShowTariffInfo') %}
+        {% set noteInfo = _self.CallbackByName( adjustment, 'ShowAdjustmentNote') %}
+        {% set receiptInfo = '' %}
+        {% if showReceiptInfo and showReceiptInfo == true %}
+        {% set receiptInfo = _self.CallbackByName( { 
+                'adjustment': adjustment,
+                'createReceiptModalBody': createReceiptModalBody
+            }, 'ShowReceiptInfo') %}
+        {% endif %}
+        {%- set contentOfInfo = '' -%}
+        {% for infoItem in [tariffInfo,noteInfo,receiptInfo] %}
+            {%- set contentOfInfo = contentOfInfo ~ infoItem|trim -%}
+        {% endfor %}
+        {%- if contentOfInfo -%} {{ contentOfInfo|raw }} {%- else -%}&nbsp;{%- endif -%}
+    </td>
+    <td class="actions">{{ buttonsEditDelete('receipt_adjustment_edit', {'adjustmentId': adjustment.id}, 'receipt_adjustment_delete', {'adjustmentId': adjustment.id}, '') }}</td>
+    {% if otherCells and otherCells|length > 0 -%}
+    {% for cell in otherCells %}  
+    {{ cell|raw }}
+    {% endfor %}
+    {%- endif -%}
+</tr>
+{% endmacro AdjustmentInfoRow %}
+
+
+{% macro AdjustmentInfoTableHeaderRow(otherCells = []) %}
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Value start</th>
+        <th scope="col">Value up to</th>
+        <th scope="col">Diff. / Value</th>
+        <th scope="col">Total</th>
+        <th scope="col">Date from</th>
+        <th scope="col">Date to</th>
+        <th scope="col">Info</th>
+        <th scope="col">Actions</th>
+        {% if otherCells and otherCells|length > 0 -%}
+        {% for cell in otherCells %}  
+        {{ cell|raw }}
+        {% endfor %}
+        {%- endif -%}
+    </tr>
+{% endmacro AdjustmentInfoTableHeaderRow %}
+
+
+{% macro ReceiptAdjustmentsInfoTable(adjustments, title, currentAdjustmentId, showTotalAmount = true, showReceiptInfo, otherCells, otherHeaderCells ) %}
+{% import _self as self %}
+{% set title =  title is null ? '<h5>Receipt\'s adjusments information</h5>' : title %}
+{{ title|raw }}
+<table class="table table-sm table-bordered" id="receiptAdjustmentsListTable" >
+<thead>
+    {{ _self.CallbackByName(otherHeaderCells,'AdjustmentInfoTableHeaderRow') }}
+</thead>    
+{% if adjustments|length > 0 %}  
+{% set totalAmount, processedReceipts, createReceiptModalBody = 0, [], false %}
+{% for adjustment in adjustments %}
+{% set totalAmount = totalAmount + adjustment.total %}
+{% if showReceiptInfo == true %}
+    {% if adjustment.receipt.id in processedReceipts %}
+        {% set createReceiptModalBody = false  %}
+    {% else %}
+        {% set createReceiptModalBody, processedReceipts  = true, processedReceipts|merge([adjustment.receipt.id])  %}
+    {% endif %}
+{% endif %}
+{{ self.AdjustmentInfoRow(adjustment, loop.index, currentAdjustmentId, showReceiptInfo, createReceiptModalBody, (otherCells and otherCells|length > 0) ? [otherCells[loop.index0]] : [] ) }}
+{% endfor %}
+{% if showTotalAmount and showTotalAmount == true %}
+<tr>
+    <td colspan="4">&nbsp;</td>
+    <td class="text-right"><strong>{{ totalAmount }}</strong></td>
+    <td colspan="4">&nbsp;</td>
+</tr>
+{% endif %}
+{% else %}
+<tr>
+    <td colspan="9" class="text-center">No adjustmens yet</td>
+</tr>    
+{% endif %}
+</table>
+{% endmacro ReceiptAdjustmentsInfoTable %}
+
+
+{% macro ReceiptInfo(receipt, showTariff = true , otherRows = '') %}
+{% import _self as self %}    
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th colspan="3">Range of values</th>
+            <th rowspan="2" class="align-top text-center">Total</th>
+            <th colspan="2">Date range</th>
+        </tr>
+        <tr>
+            <th>Start</th>
+            <th>Up to</th>
+            <th>Diff / Value</th>
+            <th>From</th>
+            <th>To</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%- if showTariff == true -%}
+        {{- self.TariffInfoRow(receipt.tariff) -}}
+        {%- endif -%}
+        {{- self.ReceiptInfoRow(receipt) -}}
+        {%- if otherRows -%}{{- otherRows|raw -}}{%- endif -%}
+    </tbody>
+</table>    
+{% endmacro ReceiptInfo %}    
+
+{% macro ReceiptInfoTable(receipt, currentAdjustmentId) %}
+{% import _self as self %}    
+<h4>Receipt information</h4>
+{% if receipt %}
+{{ self.ReceiptInfo(receipt, true, "<tr><td colspan=\"6\">#{self.ReceiptAdjustmentsInfoTable(receipt.adjustments, null, currentAdjustmentId)}</td></tr>" ) }}
+{% else %}
+<h4>Receipt data was not found.</h4>
+{% endif %}
+{% endmacro ReceiptInfoTable %}

@@ -1,0 +1,64 @@
+{% block receiptCompareTable %}
+<table class="table table-bordered">
+  <thead>
+    <tr>
+        <th scope="col">Description</th>
+        <th scope="col" class='text-center'>Last</th>
+        <th scope="col" class='text-center'>Proposed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+        <th scope="row">Place:</th>
+        <td colspan="2">{{ receipts.receipt ? receipts.receipt.tariff.place.name : ( receipts.receipt_new ? receipts.receipt_new.tariff.place.name : ' --//-- ' ) }}</td>
+    </tr>
+    <tr>
+        <th scope="row">Service:</th>
+        <td colspan="2">{{ receipts.receipt ? receipts.receipt.tariff.service.name : ( receipts.receipt_new ? receipts.receipt_new.tariff.service.name : ' --//-- ' ) }}</td>
+    </tr>
+    <tr>
+        <th scope="row">Tariff:</th>
+        <td class='text-right'>{{ (receipts.receipt ? receipts.receipt.tariff.unitValue : ' --//-- ') ~ ' per ' ~ (receipts.receipt ? receipts.receipt.tariff.unitName : ' --//-- ') }}</td>
+        <td class='text-left'>{{ receipts.receipt_new.tariff.unitValue ~ ' per ' ~ receipts.receipt_new.tariff.unitName }}</td>
+    </tr>
+    <tr>
+        <th scope="row">Value begin:</th>
+        <td class='text-right'>{{ receipts.receipt ? receipts.receipt.valueB : ' --//-- '  }}</td>
+        <td class='text-left'>{{ receipts.receipt_new.valueB }}</td>
+    </tr>
+    <tr>
+        <th scope="row">Value end:</th>
+        <td class='text-right'>{{ receipts.receipt ? receipts.receipt.valueE : ' --//-- '  }}</td>
+        <td class='text-left'>{{ receipts.receipt_new.valueE }}</td>
+    </tr>
+    <tr>
+        <th scope="row" class="text-right"><span class="badge badge-info">Info</span></th>
+        <td colspan="2" class='text-center'><span class='small text-muted'><strong>Value below is difference between end value and begin one.</strong></span></td>
+    </tr>
+    <tr>
+        <th scope="row">Value:</th>
+        <td class='text-right'>{{ receipts.receipt ? receipts.receipt.value : ' --//-- '  }}</td>
+        <td class='text-left'>{{ receipts.receipt_new.value }}</td>
+    </tr>
+    <tr>
+        <th scope="row" class="text-right"><span class="badge badge-info">Info</span></th>
+        <td colspan="2" class='text-center'><span class='small text-muted'><strong>Total below is result of multiplication between appropriate values' of end  and their tariff.</strong></span></td>
+    </tr>
+    <tr>
+        <th scope="row">Total:</th>
+        <td class='text-right'>{{ receipts.receipt ? receipts.receipt.total : ' --//-- ' }}</td>
+        <td class='text-left'>{{ receipts.receipt_new.total }}</td>
+    </tr>
+    <tr>
+        <th scope="row">Date begin:</th>
+        <td class='text-right'>{{ receipts.receipt ? receipts.receipt.dateB|date('d.m.Y H:i:s') : ' --//-- '   }}</td>
+        <td class='text-left'>{{ receipts.receipt_new.dateB|date('d.m.Y H:i:s') }}</td>
+    </tr>
+    <tr>
+        <th scope="row">Date end:</th>
+        <td class='text-right'>{{ receipts.receipt ? receipts.receipt.dateE|date('d.m.Y H:i:s') : ' --//-- ' }}</td>
+        <td class='text-left'>{{ receipts.receipt_new.dateE|date('d.m.Y H:i:s') }}</td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}

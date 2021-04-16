@@ -1,0 +1,87 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% set titleValue = 'Payment information list' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+{{ contentMacros.pageTitleWithAddButton(titleValue,'payment_info_newEdit') }}
+{% if paymentInfoList and paymentInfoList|length > 0 %}
+<div id="payment-info-accordion" class="mt-2">
+    {% for paymentInfo in paymentInfoList %}    
+    <div class="card">
+        <div class="card-header py-1" id="payment-info-heading{{ loop.index0 }}">
+            <div class="w-100">
+                <button class="btn btn-link text-left collapsed" data-toggle="collapse" data-target="#payment-info-collapse{{ loop.index0 }}" aria-expanded="false" aria-controls="payment-info-collapse{{ loop.index0 }}">
+                    <span class="fa fa-angle-double-down"></span>
+                    <span class="text-truncate" style="white-space: normal;">
+                        {{ paymentInfo.paymentInfo.firstName }}, {{ paymentInfo.paymentInfo.lastName }} (<em>Second name:</em> {{ paymentInfo.paymentInfo.secondName }})
+                    </span>
+                </button>
+            </div>
+            {{ form_start(paymentInfo.shortPaymentInfoForm,{ 'action': path( "payment_info_changePlacePriority", {"id": paymentInfo.paymentInfo.id } ), "attr": {"class": "form-inline w-100" } }) }}
+            {{ form_errors(paymentInfo.shortPaymentInfoForm) }}
+                <div class="d-flex m-2">
+                    <div class="form-group mx-2">
+                        {#<label class="mr-2">Place</label>#}
+                        {{ form_label(paymentInfo.shortPaymentInfoForm.place, 'Place', {'label_attr': {'class': "mr-2"} }) }}
+                        {{ form_widget(paymentInfo.shortPaymentInfoForm.place) }}
+                    </div>
+                    <div class="form-group mx-2">
+                        {#<label class="mr-2">Priority</label>#}
+                        {{ form_label(paymentInfo.shortPaymentInfoForm.priority, null ,{'label_attr': {'class': "mr-2"} }) }}
+                        {{ form_widget(paymentInfo.shortPaymentInfoForm.priority) }}
+                    </div>
+                </div>
+                {{ contentMacros.faButtonsSaveEditDelete("payment_info_newEdit", {"id": paymentInfo.paymentInfo.id }, "payment_info_delete", {"id": paymentInfo.paymentInfo.id }) }}
+            {{ form_end(paymentInfo.shortPaymentInfoForm) }}
+        </div>
+
+        <div id="payment-info-collapse{{ loop.index0 }}" class="collapse" aria-labelledby="payment-info-heading{{ loop.index0 }}" data-parent="#payment-info-accordion">
+            <div class="card-body">
+                <div class="mx-sm-2 mx-md-4">
+                {# Body for data from paymentInfo part #}
+                {% set pInfoSections = {
+                       "Address": {
+                            "Country": paymentInfo.paymentInfo.country,
+                            "Region": paymentInfo.paymentInfo.region,
+                            "City": paymentInfo.paymentInfo.city,
+                            "Street": paymentInfo.paymentInfo.street,
+                            "House": paymentInfo.paymentInfo.house,
+                            "Apartment": paymentInfo.paymentInfo.apartment,
+                       },
+                       "": {
+                            "Internal account code": paymentInfo.paymentInfo.code,
+                       },
+                       "Payment info for target enterprise": {
+                            "IBAN": paymentInfo.paymentInfo.iban,
+                            "Code of target enterprise": paymentInfo.paymentInfo.subIban,
+                       },
+                       "Notices": {
+                            "Note": paymentInfo.paymentInfo.note
+                       },
+                } %}
+                {% for pInfoSectionKey, pInfoSection in pInfoSections %}
+                <h5 {% if loop.index > 1 %}class="mt-4"{% endif %} >{{ pInfoSectionKey }}</h5>
+                {% for pInfoSectionTitle, pInfoSectionValue in pInfoSection %}
+                <div class="row mx-sm-2 mx-md-4" >
+                    <div class="col-sm-3" role="payment-info-data-title">
+                        <strong>{{ pInfoSectionTitle }}</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ pInfoSectionValue }}
+                    </div>
+                </div>
+                {% endfor %}
+                {% endfor %}    
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<h4>List is empty</h4>
+{% endif %}      
+{% endblock body %}

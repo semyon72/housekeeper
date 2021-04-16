@@ -1,0 +1,48 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+    
+{% set titleValue = 'Service list' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+{{ contentMacros.pageTitleWithAddButton(titleValue,'service_newEdit') }}
+<table class="table table-sm table-hover">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Service description</th>
+        <th scope="col">Type of calculator</th>
+        <th scope="col" class="text-center">Action</th>
+    </tr>
+{% if services %} 
+{% for element in services %}
+    <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ element.service.name }}</td>
+        <td>{% if element.service.calculator in calculators|keys %}{{ calculators[element.service.calculator] }}{% else %}{{ element.service.calculator }}{% endif %}</td>
+        <td>
+            {% set mustHaveParameters = false %}
+            {% if element.service.calculator == 'db5bf992-22ad-4917-bf13-71da1df21959' %} {# Cumulative calculator #}
+                {% set mustHaveParameters = true %}
+            {% endif %}
+            {%- set spanBadge -%}
+                <span class="badge badge-primary">{{element.parameterCnt}}</span>
+            {% endset %}
+            {# buttonA(path, params={}, imageUrl,  otherContent = '', a_class = null, img_class = null, title = null ) #}
+            {% set warningIsNeed = not mustHaveParameters and element.parameterCnt > 0 %}
+            {% set aClassStr = ' py-0 px-2 mx-1'~
+                (mustHaveParameters or element.parameterCnt > 0 ? '' : ' disabled invisible')~
+                ( warningIsNeed  ? ' bg-warning' : '')
+            %}
+            {% set serviceParameters = contentMacros.buttonA('serviceparameter_list', {'serviceId': element.service.id}, '/icoset/png/24x24/List.png', spanBadge, aClassStr, null , warningIsNeed ? 'Parameters is not active for this calculator type. For manage them you need to change calculator type, before.' ) %}
+            {{ contentMacros.buttonsEditDelete('service_newEdit',{'id': element.service.id},'service_delete',{'id': element.service.id},serviceParameters) }}
+        </td>
+    </tr>
+{% endfor %}
+{% else %}
+    <tr>
+        <td colspan="4" style="text-align: center">Services' set is empty</td>
+    </tr>
+{% endif %}
+</table>
+{% endblock body %}

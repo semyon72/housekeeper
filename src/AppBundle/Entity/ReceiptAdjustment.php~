@@ -1,0 +1,102 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * ReceiptAdjustment
+ *
+ * @ORM\Table(name="receipt_adjustment", indexes={@ORM\Index(name="tariff_id", columns={"tariff_id"}), @ORM\Index(name="receipt_id", columns={"receipt_id"})})
+ * @ORM\Entity
+ */
+class ReceiptAdjustment
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="value_b", type="decimal", precision=11, scale=4, nullable=false)
+     */
+    private $valueB = '0.0000';
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="value_e", type="decimal", precision=11, scale=4, nullable=false)
+     */
+    private $valueE = '0.0000';
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="value", type="decimal", precision=11, scale=4, nullable=false)
+     */
+    private $value;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="total", type="decimal", precision=14, scale=4, nullable=false)
+     */
+    private $total;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_b", type="datetime", nullable=false)
+     */
+    private $dateB;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_e", type="datetime", nullable=false)
+     */
+    private $dateE;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_c", type="datetime", nullable=false)
+     */
+    private $dateC;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="note", type="string", length=255, nullable=false)
+     */
+    private $note = '';
+
+    /**
+     * @var \Tariff
+     *
+     * @ORM\ManyToOne(targetEntity="Tariff")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="tariff_id", referencedColumnName="id")
+     * })
+     */
+    private $tariff;
+
+    /**
+     * @var \Receipt
+     *
+     * @ORM\ManyToOne(targetEntity="Receipt")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="receipt_id", referencedColumnName="id")
+     * })
+     */
+    private $receipt;
+
+
+}
+

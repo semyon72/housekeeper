@@ -1,0 +1,14 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: housekeeper
+    database_user: housekeeper
+    database_password: 12345678
+    mailer_transport: smtp
+    mailer_host: localhost
+    mailer_user: admin@housekeeper.local
+    mailer_password: admin
+    secret: ThisTokenIsNotSoSecretChangeIt
+    
+    login_form_default_target_path: place_list

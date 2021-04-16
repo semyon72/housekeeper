@@ -1,0 +1,20 @@
+{% extends "login/base.html.twig" %}
+
+{% block title %}Confirmation of email - &lt;{{ email }}&gt;.{% endblock %}
+
+{% block page_header %}Take congratulations.{% endblock %}
+
+{% block body %}
+<p>
+    Sign up is finished successfully. On your eMail <strong><em>{{ email }}</em></strong>
+    was sent letter where pointed link for activation your record. 
+    You will need data from this letter and link that pointed in it or below.
+    Also in that letter will accessible the button that will allow for you to
+    avoid copy-paste of pointed data into form. In other words - all in one.
+</p>
+
+<a href="{{ path('login_confirm_email') }}">
+    Click this link and you will be redirected on email address confirmation form.
+</a>
+<p>Or just close this page.</p> 
+{% endblock body %}

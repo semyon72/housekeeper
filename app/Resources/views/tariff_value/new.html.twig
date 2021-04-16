@@ -1,0 +1,27 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+{% use 'tariff_value/commonBlocks.html.twig' %}
+
+{{ block('currentTariffMessage') }}  
+{{ form_start(form) }}
+{{ form_errors(form) }}
+<fieldset class="border p-2">
+    <legend class="w-auto">Differential value of tariff</legend>
+    <div class="form-group">
+    {{ form_label(form.valueFrom) }}
+    {{ form_widget(form.valueFrom) }}
+    </div>
+    <div class="form-group">
+    {{ form_label(form.valueTo) }}
+    {{ form_widget(form.valueTo) }}
+    </div>
+    <div class="form-group">
+    {{ form_label(form.unitValue) }}
+    {{ form_widget(form.unitValue) }}
+    </div>
+</fieldset>
+{{ form_end(form) }} 
+{% endblock %}

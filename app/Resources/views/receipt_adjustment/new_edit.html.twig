@@ -1,0 +1,53 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{% set adjustment = form.vars.data %}
+{% include('receipt_adjustment/receipts_adjustments.html.twig') %}
+
+{{ form_start(form) }}
+{{ form_errors(form) }}
+<fieldset class="border p-2">
+    <legend class="w-auto">Receipt's adjustment information</legend>
+    {{ form_row(form.tariff) }}
+    <div class="form-group">
+        <button type="submit" class="btn btn-success" id="{{ form.calculateForTariff.vars.id }}" name="{{ form.calculateForTariff.vars.full_name }}">Auto calculate <span class="fa fa-calculator"></span></button>
+    </div>
+    {{ dump(form) }}
+    <div class="form-row">
+        <div class="form-group col-auto">
+        {{ form_label(form.valueB) }}
+        {{ form_widget(form.valueB) }}
+        </div>
+        <div class="form-group col-auto">
+        {{ form_label(form.valueE) }}
+        {{ form_widget(form.valueE) }}
+        </div>
+        <div class="form-group col-auto">
+        {{ form_label(form.value) }}
+        {{ form_widget(form.value) }}
+        </div>
+        <div class="form-group col-auto">
+        {{ form_label(form.total) }}
+        {{ form_widget(form.total) }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-auto">
+        {{ form_label(form.dateB) }}
+        {{ form_widget(form.dateB) }}
+        </div>
+        <div class="form-group col-auto">
+        {{ form_label(form.dateE) }}
+        {{ form_widget(form.dateE) }}
+        </div>
+    </div>
+        
+    {{ form_rest(form) }}
+    <div class="form-group">
+        <button type="submit" class="btn btn-success">Confirm adjustment <span class="fa fa-sliders-h"></span></button>
+    </div>
+        
+</fieldset>
+{{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,11 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{{ form_start(form) }}
+{{ form_errors(form) }}
+<fieldset class="border p-2">
+    <legend class="w-auto">Service information</legend>
+    {{ form_widget(form) }}
+</fieldset>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html.twig" %}
+
+{% set titleValue = 'Select report' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+{{ contentMacros.pageTitleWithAddButton(titleValue,'') }}
+{{ form_start(reportSelectForm) }}
+    {{ form_errors(reportSelectForm) }}
+    <div class="row form-group">
+        <div class="col">
+            {{ form_label(reportSelectForm.reportGuid) }}
+            {{ form_widget(reportSelectForm.reportGuid) }}
+        </div>
+        <div class="col-auto ml-auto d-flex">
+            <button type="submit" class="btn btn-primary mt-auto">Change report <span class="fa fa-table"></span></button>
+        </div>
+    </div>
+    {{ form_rest(reportSelectForm) }}
+{{ form_end(reportSelectForm) }}
+{{ reportContent is not empty ? reportContent|raw : 
+contentMacros.contentBetween('<h5 class="mr-4 d-inline">Set of receipts is empty. It must be selected before.</h5>'~contentMacros.faButtonA('receipt_list',{},'fa-receipt','','Receipts'), '') }}
+{% endblock %}

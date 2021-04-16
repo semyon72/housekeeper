@@ -1,0 +1,12 @@
+{% use 'receipt/prepare_receipt_errors_blocks.html.twig' %} 
+
+{% block placeServiceTitle %}
+    {% set placeService = calculator.placeService %}
+    <h4>Selected {{ placeService.service.name }} at {{ placeService.place.name }} </h4>
+{% endblock  %}
+
+{% for errorBlockName, errorMessage in calculator.errors  %}
+{% with { 'errorMessage': errorMessage, 'calculator': calculator} %}
+    {{ block(errorBlockName) }}
+{% endwith %}
+{% endfor %}

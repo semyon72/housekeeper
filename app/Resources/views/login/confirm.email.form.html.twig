@@ -1,0 +1,17 @@
+{% extends "login/base.html.twig" %}
+
+{% block title %}AppBundle:Login:Signin{% endblock %}
+
+{% block page_header %}Confirm Email{% endblock %}
+
+{% block body %}
+{{ form_start(confirmForm) }}
+    {{ form_errors(confirmForm) }}
+    {{ form_row(confirmForm.email) }}
+    {{ form_row(confirmForm.oneTimePass) }}
+    {{ form_rest(confirmForm) }}
+    <div class="form-group">
+        <button type="submit" class="btn btn-success">Confirm email<span class="fa fa-lock"></span></button>
+    </div>
+{{ form_end(confirmForm) }}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% import 'macros/receipt_adjustment_macros.html.twig' as receiptInfoMacros %}
+
+<p class="mt-2">
+  <a class="btn btn-primary" data-toggle="collapse" href="#collapseReceiptAdjustmentInfoTable" role="button" aria-expanded="false" aria-controls="collapseReceiptAdjustmentInfoTable">
+      <span class="fa fa-angle-double-down"></span>&nbsp;&nbsp;Receipt information
+  </a>
+</p>
+<div class="collapse" id="collapseReceiptAdjustmentInfoTable">
+    <div class="container-fluid">
+        <div class="row mb-0">
+            <div class="col-sm-12">
+                {{ receiptInfoMacros.ReceiptInfoTable(adjustment.receipt, adjustment.id ? adjustment.id : '' ) }}
+            </div>
+        </div>
+    </div>
+</div>

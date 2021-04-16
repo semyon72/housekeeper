@@ -1,0 +1,68 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+    
+{% set titleValue = 'Tariff list' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+{{ contentMacros.pageTitleWithAddButton(titleValue,'tariff_newEdit') }}
+<style>
+    table.table.noborder td, table.table-sm.noborder td {
+        border: none;
+        padding-top: 0px !important;
+    }
+</style>    
+<table class="table table-sm table-hover">
+    <tr>
+        <th scope="col" rowspan="2">#</th>
+        <th scope="col" colspan="2" class="text-center">Unit info</th>
+        <th scope="col" colspan="2" class="text-center">Date info</th>
+        <th scope="col" rowspan="2">Place & service information</th>
+        <th scope="col" rowspan="2" class="text-center">Action</th>
+    </tr>
+    <tr>
+        <th scope="col">Unit</th>
+        <th scope="col">Price</th>
+        <th scope="col">Begin</th>
+        <th scope="col">End</th>
+    </tr>
+{% if tariffs %} 
+{% for tariff in tariffs %}
+    <tr>
+        <th scope="row">{{ loop.index }}</td>
+        <td>{{ tariff.tariff.unitName }}</td>
+        <td class='align-top'>
+            <table class='w-100 table-sm noborder'>
+                <tr>
+                    <td>
+                    {% if tariff.tariffValueCnt > 0 %}
+                    <strong>Default: </strong>{{ tariff.tariff.unitValue }}<br/>
+                    {% for tariffValue in tariff.tariff.tariffValues %}
+                        <span style='white-space: nowrap; font-size: 0.83em;'>{{ tariffValue.valueFrom }} &#x2025; {{ tariffValue.valueTo }} &#x2023; <span style='color: #10707f'>{{ tariffValue.unitValue }}</span> {{ (not loop.last ? ' <br/> ')|raw }}</span>
+                    {% endfor %}
+                    {% else %}
+                    {{ tariff.tariff.unitValue }}
+                    {% endif %}    
+                    </td>
+                    <td class='text-right'>
+                    <a style='margin-top: 4px;' href="{{ path('tariffvalue_list',{'tariffId': tariff.tariff.id}) }}" class="badge badge-primary">{{ tariff.tariffValueCnt }}</a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td>{{ tariff.tariff.dateB|date('d.m.Y') }}</td>
+        <td>{{ tariff.tariff.dateE is empty ? "" : tariff.tariff.dateE|date("m/d/Y") }}</td>
+        <td>{{ tariff.tariff.place.name }} <br/> {{ tariff.tariff.service.name }}</td>
+        <td>
+            {{ contentMacros.buttonsEditDelete('tariff_newEdit',{'id': tariff.tariff.id},'tariff_delete',{'id': tariff.tariff.id}) }}            
+        </td>
+    </tr>
+{% endfor %}
+{% else %}
+    <tr>
+        <td colspan="7" style="text-align: center">Tariff' set is empty</td>
+    </tr>
+{% endif %}
+</table>
+{% endblock body %}

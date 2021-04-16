@@ -1,0 +1,31 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{{ form_start(form, {'action': path('counter_newEdit', {'id': form.vars.data.id}) }) }}
+{{ form_errors(form) }}
+<fieldset class="border p-2">
+    <legend class="w-auto">Counter information</legend>
+    <div class="row">
+        <div class="form-group col">
+            {{ form_label(form.value) }}
+            {{ form_widget(form.value) }}
+        </div>
+        <div class="form-group col">
+            {{ form_label(form.valueName) }}
+            {{ form_widget(form.valueName) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col form-group">
+            {{ form_label(form.onDate) }}
+            {{ form_widget(form.onDate) }}
+        </div>
+        <div class="col form-group my-auto">
+            {{ form_widget(form.recalculate) }}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+</fieldset>
+{{ form_end(form) }}
+{% endblock %}

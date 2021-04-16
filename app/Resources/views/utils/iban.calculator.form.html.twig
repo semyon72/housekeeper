@@ -1,0 +1,70 @@
+{% extends "login/base.html.twig" %}
+
+{% block title %}Housekeeper: IBAN calculator{% endblock %}
+
+{% block page_header %}IBAN calculator{% endblock %}
+
+{% block body %}
+    
+{% if iban %}
+{% set alert_class = 'alert-success' %} 
+{% if errors and errors|length > 0  %}
+{% set alert_class = 'alert-danger' %} 
+<span class="invalid-feedback d-block">
+    <span class="d-block">
+        <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
+        {% for error in errors %}
+            <span class="form-error-message">{{ error.message }}</span>                
+        {% endfor %}
+    </span>
+</span>    
+{% endif %}
+<div class="alert {{ alert_class }} border" role="alert">
+  <h4 class="alert-heading">{% if alert_class == 'alert-danger' %} Ooop :( Something went wrong.{% else %}Well done!{% endif %} </h4>
+  <p>Your International Bank Account Number (IBAN) was calculate.</p>
+  <h4 class='m-auto'>IBAN is: {{ iban }}</h4>
+  {% if alert_class == 'alert-danger' %}
+  <hr>
+  <p class="mb-0">
+      Maybe you set either not appropriate value for <strong><em>Length of "Bank code"</em></strong>
+      or <strong><em>Length of "Account number"</em></strong> for selected country.
+      Or prpbably, the selected country doesn't support IBAN at all.
+  </p>
+  {% endif %}
+</div>
+
+{% endif %}    
+{{ form_start(ibanCalculatorForm) }}
+    <div class="row">
+        <div class="col-12">
+            {{ form_row(ibanCalculatorForm.countryCode) }}
+        </div>
+    </div>
+    <fieldset class="border px-3 mb-2">
+        <legend>Bank information</legend>
+        <div class="row">
+            <div class="col-7">
+                {{ form_row(ibanCalculatorForm.bankCode, {'label': 'Code'}) }}
+            </div>
+            <div class="col-5">
+                {{ form_row(ibanCalculatorForm.bankCodeLength, {'label': 'Length'} ) }}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="border px-3 mb-2">
+        <legend>Bank's account information</legend>
+        <div class="row">
+            <div class="col-7">
+                {{ form_row(ibanCalculatorForm.accountNumber, {'label': 'Number'}) }}
+            </div>
+            <div class="col-5">
+                {{ form_row(ibanCalculatorForm.accountNumberLength, {'label': 'Length'}) }}
+            </div>
+        </div>
+    </fieldset>
+    {{ form_rest(ibanCalculatorForm) }}
+    <div class="form-group d-flex justify-content-end">
+        <button type="submit" class="btn btn-success">Calculate <span class="fa fa-calculator"></span></button>
+    </div>
+{{ form_end(ibanCalculatorForm) }}
+{% endblock %}

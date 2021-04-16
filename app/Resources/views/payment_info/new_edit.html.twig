@@ -1,0 +1,108 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+
+{% block body %}
+{{ form_start(paymentInfoForm) }}
+{{ form_errors(paymentInfoForm) }}
+<fieldset class="border p-2">
+    <legend class="w-auto">Users's payment info</legend>
+    <div class="row">
+        <div class="col-md-8">
+            {{ form_row(paymentInfoForm.place) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(paymentInfoForm.priority) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form_row(paymentInfoForm.firstName) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(paymentInfoForm.lastName) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(paymentInfoForm.secondName) }}
+        </div>
+    </div>
+    <div class="row" role="address">
+        <div class="col-md-12 border">
+            <div class="row" role="address-header">
+                <div class="col">
+                    <h5>Address</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    {{ form_row(paymentInfoForm.country) }}
+                </div>
+                <div class="col-md-5">
+                    {{ form_row(paymentInfoForm.region) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(paymentInfoForm.city) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 ">
+                    {{ form_row(paymentInfoForm.street) }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_row(paymentInfoForm.house) }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_row(paymentInfoForm.apartment) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" role="bank-info">
+        <div class="col-md-12 border">
+            <div class="row" role="bank-info-header">
+                <div class="col">
+                    <h5>Bank information</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-5">
+                    <div class="row flex-nowrap align-items-end">
+                        <div class="col-10 pr-1">
+                            <div class="form-groupr">
+                            {{ form_errors(paymentInfoForm.iban) }} 
+                            {{ form_label(paymentInfoForm.iban) }}
+                            {{ form_widget(paymentInfoForm.iban) }}
+                            </div>
+                        </div>
+                        <div class="col-2 px-1">
+                            {{ contentMacros.faButtonA('utils_iban_calculator', {} ,'fa-globe','_blank') }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3">
+                    {{ form_row(paymentInfoForm.subIban) }}
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                    {{ form_errors(paymentInfoForm.code) }} 
+                    {{ form_label(paymentInfoForm.code) }}
+                    <span class="badge badge-info" data-toggle="tooltip" data-placement="left" title="Internal account code of payer inside the IBAN owner for the payment to enterprise.">Info</span>
+                    {{ form_widget(paymentInfoForm.code) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+        
+    
+    {{ form_rest(paymentInfoForm) }}
+    <div class="form-group">
+        <button type="submit" class="btn btn-success">Confirm information <span class="fa fa-file-invoice"></span></button>
+    </div>
+    
+</fieldset>
+{{ form_end(paymentInfoForm) }}
+{% endblock %}

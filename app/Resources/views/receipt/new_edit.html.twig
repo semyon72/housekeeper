@@ -1,0 +1,47 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{{ form_start(form) }}
+{{ form_errors(form) }}
+<fieldset class="border p-2">
+    <legend class="w-auto">Receipt information</legend>
+    {{ form_row(form.tariff) }}
+    <div class="form-row">
+        <div class="form-group col-sm-auto">
+        {{ form_label(form.valueB) }}
+        {{ form_widget(form.valueB) }}
+        </div>
+        <div class="form-group col-sm-auto">
+        {{ form_label(form.valueE) }}
+        {{ form_widget(form.valueE) }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-sm-auto">
+        {{ form_label(form.value) }}
+        {{ form_widget(form.value) }}
+        </div>
+        <div class="form-group col-sm-auto">
+        {{ form_label(form.total) }}
+        {{ form_widget(form.total) }}
+        </div>
+        <div class="form-group col-sm-auto my-auto">
+        {{ form_label(form.calculate) }}
+        {{ form_widget(form.calculate) }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-sm-auto">
+        {{ form_label(form.dateB) }}
+        {{ form_widget(form.dateB) }}
+        </div>
+        <div class="form-group col-sm-auto">
+        {{ form_label(form.dateE) }}
+        {{ form_widget(form.dateE) }}
+        </div>
+    </div>
+</fieldset>
+{{ form_widget(form.save,{attr: {class: 'btn-primary mt-2'} }) }}
+{{ form_end(form) }}
+{% endblock %}

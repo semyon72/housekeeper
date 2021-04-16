@@ -1,0 +1,201 @@
+/*
+The MIT License
+
+Copyright 2019 Semyon Mamonov <semyon.mamonov@gmail.com>.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+/*
+    If You have met part of code very similar to written by you	then
+    ;)****** Great Thanks ******;)
+        
+*/
+/* 
+    Created on : Dec 13, 2019, 11:12:55 PM
+    Author     : Semyon Mamonov <semyon.mamonov@gmail.com>
+*/
+
+
+.nav-sidebar-background-color {
+    background-color: aliceblue;
+}
+
+.card-footer .links a{
+    margin-left: 4px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+}
+
+div[class^='sidebar-'] .fa {
+    font-size: 1.33em;
+    color: #063fe9db;
+}
+
+div[class^='sidebar-'] li {
+    background-color: aliceblue;
+    margin-bottom: 2px;
+    border: #ada9a942 solid 1px;
+}
+
+div[class^='sidebar-'] li.divider {
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    border-top: #ada9a942 solid 1px;
+}
+
+div[class^='sidebar-'] a:hover{
+    background-color: #007bff;
+    color: #fff;
+}
+
+div[class^='sidebar-'] a:hover .fa{
+    background-color: #007bff;
+    color: #fff;
+}
+
+body nav.navbar {
+    box-shadow: 0px 2px 8px #88888878;
+    margin-bottom: 6px;
+}
+
+nav a.navbar-brand {
+    font-weight: bold;
+    font-size: 22px;
+    text-shadow: 4px 4px 4px #888c;
+}
+
+.tooltip-inner {
+    background-color: aliceblue;
+    border: solid 1px #ccc;
+    color: #000;
+    box-shadow: 0px 2px 6px 2px #88888878;
+/*    font-weight: bold; */
+}
+
+.tooltip .arrow::before {
+    border-bottom-color: #ccc;
+}
+
+#payment-info-accordion div.card-header {
+    flex-wrap: wrap;
+    background-color: aliceblue;
+    box-shadow: 0px 2px 6px #88888878;      
+}
+
+#payment-info-accordion div.card-header .wrap-normal {
+    white-space: normal !important;
+}
+
+#payment-info-accordion input[type="number"]{
+   max-width: 7em;
+}
+
+#payment-info-accordion .card-body div[role="payment-info-data-title"] strong::after{
+   content: ":";
+}
+
+a.btn img[src="/icoset/png/24x24/Add.png"] {
+    width: 18px;
+    height: 18px;
+    margin-bottom: 2px;
+}
+
+.shadow{
+    text-shadow: 2px 3px 7px #888888cc; 
+}
+
+.page-title {
+    font-size: 1.62em;
+    text-shadow: 2px 3px 7px #888888cc; 
+}
+
+form[name="payment_info"] div.row[role="address"],
+form[name="payment_info"] div.row[role="bank-info"] {
+    padding: 0px 15px;
+    margin-bottom: 8px;
+}
+
+form[name="payment_info"] div.row[role="address"] div.row[role="address-header"] h5,
+form[name="payment_info"] div.row[role="bank-info"] div.row[role="bank-info-header"] h5{
+    background-color: #e0e0e0c2;
+    margin: 0px -15px;
+    padding: 2px 15px;
+}
+
+span.underline {
+    text-decoration: black underline;
+}
+
+.report-receipt-header {
+    background-color: #cccccc14;
+}
+
+#collapseReceiptAdjustmentInfoTable {
+    font-size: smaller !important;
+}
+
+#collapseReceiptAdjustmentInfoTable table th,
+#collapseReceiptAdjustmentInfoTable table td {
+    padding: 0.35rem;
+}
+
+#collapseReceiptAdjustmentInfoTable  #receiptAdjustmentsListTable {
+    margin-bottom: 0px;
+}
+
+#collapseReceiptAdjustmentInfoTable table td.actions a.btn{
+    height: 20px;
+    width: 20px;
+    padding: 0px !important;
+}
+
+#collapseReceiptAdjustmentInfoTable table td.actions a.btn img{
+    margin-top: -3px !important;
+    width: 12px;
+    height: 12px;
+}
+
+
+[id ^= "collapseReceiptAdjustmentInfoTable"] {
+    font-size: smaller !important;
+}
+
+[id ^= "collapseReceiptAdjustmentInfoTable"] table th,
+[id ^= "collapseReceiptAdjustmentInfoTable"] table td {
+    padding: 0.35rem;
+}
+
+[id ^= "collapseReceiptAdjustmentInfoTable"]  #receiptAdjustmentsListTable {
+    margin-bottom: 0px;
+}
+
+[id ^= "collapseReceiptAdjustmentInfoTable"] table td.actions a.btn{
+    height: 20px;
+    width: 20px;
+    padding: 0px !important;
+}
+
+[id ^= "collapseReceiptAdjustmentInfoTable"] table td.actions a.btn img{
+    margin-top: -3px !important;
+    width: 12px;
+    height: 12px;
+}

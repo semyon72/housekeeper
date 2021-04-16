@@ -1,0 +1,71 @@
+{% extends "base.html.twig" %}
+
+{% use 'filter/filter_form.html.twig' with javascripts as filter_javascripts, filter as from_to_place_service_filter %}
+
+{% set titleValue = 'Receipt\'s adjustments list' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+    
+{% set pageTitleButtons %}
+{{ contentMacros.faButtonSubmit('fa-table', 'Create receipt\'s adjustments report', 'btn-outline-primary ml-auto', receiptAdjustmentsForReportForm.vars.id) }} {# Add must be possible only from receipt page, need to show message and redirect to receipt list page {{ contentMacros.addButton('receipt_adjustment_new', {}, '') }} #}
+<div class="col-auto d-flex align-items-start">
+    <a href="#promptForForwardToReceiptPage" class="btn btn-outline-primary" data-toggle="modal"><img src="/icoset/png/24x24/Add.png" width="16" height="16"> Add more !?</a>
+</div>
+<div class="modal fade" id="promptForForwardToReceiptPage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title" id="exampleModalLongTitle">Add adjustment information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <p>Because each adjustment is binded with receipt as with owner 
+             It means that the best and more convenient way do it is the Receipt page.
+             That is why for add adjustment (by clicked at button 
+{#             <a href="#" title="Add adjustment" class="btn btn-outline-primary py-0 px-2 mx-1"><img title="Add adjustment" class="my-2" src="" width="16" height="16"></a>
+#}             
+             {{ contentMacros.buttonA('##', {}, '/icoset/png/24x24/Tune.png', '', null, null, 'Add adjustment') }}
+             on appropriate receipt row)
+             you should go to Receipts' list page either manually or by clicked 
+             appropriate buttob below.</p> 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a href="{{ path('receipt_list') }}" class="btn btn-primary">Go to receipt page</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endset %}
+{{  contentMacros.pageTitle(titleValue, pageTitleButtons) }}
+    
+{{ block('from_to_place_service_filter') }}    
+<style type="text/css">
+    table.table td {
+        font-size: 0.97em;
+    }
+</style>
+
+{{ form_start(receiptAdjustmentsForReportForm, {'attr': {'id': receiptAdjustmentsForReportForm.vars.id}} ) }}
+{% set adjustments, additionalCells = [], [] %}
+{% if receiptAdjustmentsForReportForm.adjustments|length > 0 %}
+    {% for adjustmentView in receiptAdjustmentsForReportForm.adjustments %}
+    {% set adjustments = adjustments|merge([receiptAdjustmentsForReportForm.adjustments.vars.choices[adjustmentView.vars.name].data]) %}
+    {% set additionalCells = additionalCells|merge([ '<td>'~form_widget(adjustmentView)~'</td>' ]) %}
+    {% endfor %}
+{% endif %}
+{% import 'macros/receipt_adjustment_macros.html.twig' as receiptInfoMacros %}
+{#{{ dump(adjustments) }}
+#}{{ receiptInfoMacros.ReceiptAdjustmentsInfoTable(adjustments, '', null, null, true, additionalCells,['<th><span class="far fa-check-square"></span></th>']) }} {# <span>&check;</span> #}
+{{ form_rest(receiptAdjustmentsForReportForm) }}
+{{ form_end(receiptAdjustmentsForReportForm) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ block('filter_javascripts') }}
+{% endblock %}

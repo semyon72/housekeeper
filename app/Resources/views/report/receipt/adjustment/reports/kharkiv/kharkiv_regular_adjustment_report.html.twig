@@ -1,0 +1,101 @@
+{# empty Twig template #}
+{% if reporter.entities|length > 0 %}
+<div class="container-fluid">
+{% set allAdjustmentEntities, allAdjustmentEntitiesId = [], '' %}    
+<div class="row flex-nowrap border mb-2">
+    <div class="col-1 py-2 d-flex flex-wrap align-content-between">
+        <div class="w-100 text-right"><span>Message</span></div>
+        <div class="w-100 text-right mb-2"><span>Cashier</span></div>
+    </div>
+    <div class="col-11 pr-0">
+        <div class="container-fluid mb-1">
+            <div class="row">
+                <div class="col-auto text-center p-2">
+                    <h4 class="shadow">Bill for communal services</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-auto p-2"><strong>IBAN:</strong> <span class="border p-2">{{ reporter.iban }}</span></div> 
+                <div class="col-auto p-2"><strong>Bank's code:</strong> <span class="border  p-2">{{ reporter.BankCode }}</span></div> 
+            </div>
+            <div class="row">
+                <div class="col-auto p-2"><strong>Private account:</strong> <span class="border p-2">{{ reporter.internalAccountNumber|split('')|join(' . ') }}</span></div> 
+            </div>
+            <div class="row">
+                <div class="col-auto p-2"><strong>First, last, second names:</strong> <span class="border p-2">{{ reporter.fullName }}</span></div> 
+            </div>
+            <div class="row">
+                <div class="col-auto p-2"><strong>Address:</strong> <span class="border p-2">{{ reporter.city }}, {{ reporter.street }},</span> <strong>house:</strong> <span class="border p-2">{{ reporter.house }},</span> <strong>apartment:</strong> <span class="border p-2">{{ reporter.apartment }}</span></div> 
+            </div>
+        </div>
+        <table class="table-bordered table-sm table-responsive-md w-100">
+            <thead>
+                <tr class="report-receipt-header">{# 16 #}
+                    <th colspan="4" rowspan="2">Service</th> {# 4 #}
+                    <th rowspan="2">Month</th> {# 1 #}
+                    <th rowspan="2">Year</th> {# 1 #}
+                    <th colspan="2" rowspan="2">Total</th> {# 2 #}
+                    <th colspan="4">Counter's data</th> {# 4 #}
+                    <th colspan="2" rowspan="2">Diff.</th> {# 2 #}
+                    <th colspan="2" rowspan="2">Tariff</th> {# 2 #}
+                </tr>
+                <tr class="report-receipt-header">{# 16 #}
+                    <th colspan="2">End</th> {# 2 #}
+                    <th colspan="2">Begin</th> {# 2 #}
+                </tr>
+            </thead>
+            <tbody>
+        {% set total = 0 %}
+        {% for reportEntity in reporter.entities %}
+            {% set adjustmentsTotal = 0 %}
+            {% if reportEntity.adjustments|length > 0 %}
+                {% set allAdjustmentEntities = allAdjustmentEntities|merge(reportEntity.receipt.adjustments) %}
+                {% for adjustment in reportEntity.adjustments %}
+                    {% set adjustmentsTotal = adjustmentsTotal + adjustment.total %}
+                    {% set allAdjustmentEntitiesId = allAdjustmentEntitiesId~'_'~adjustment.id %}
+                {% endfor %}
+                {% set adjustment = reportEntity.adjustments[reportEntity.adjustments|keys()[0]] %}
+                <tr>{# 16 #}
+                    <td colspan="4">{{ adjustment.serviceName }}</td> {# 4 #}
+                    <td class="text-center">{{ adjustment.month }}</td> {# 1 #}
+                    <td class="text-center">{{ adjustment.year }}</td> {# 1 #}
+                    <td colspan="2" class="text-right">{{ adjustmentsTotal }}</td> {# 2 #}
+                    <td colspan="2" class="text-right">{{ adjustment.valueEnd }}</td> {# 2 #}
+                    <td colspan="2" class="text-right">{{ adjustment.valueBegin }}</td> {# 2 #}
+                    <td colspan="2" class="text-right">{{ adjustment.valueDiff }}</td> {# 2 #}
+                    <td colspan="2" class="text-right">{{ adjustment.tariff }}</td> {# 2 #}
+                </tr>
+            {% endif %}
+            {% set total  = total + adjustmentsTotal %}
+        {% endfor %}
+            </tbody>
+        </table>
+        <div class="row m-2 row m-2 align-items-center">
+            <strong class="col-1 mr-2">Total:</strong>
+            <span class="col-2 border p-1 m-1">{{ total }}</span>
+            <strong class="col-auto">Sign of payer:</strong>
+            <span class="col-4 border p-1 m-1">&nbsp;</span>
+        </div>            
+    </div>
+</div>
+         
+{% if allAdjustmentEntities|length > 0 %}
+{% from 'macros/receipt_adjustment_macros.html.twig' import ReceiptAdjustmentsInfoTable %}
+<a class="btn btn-primary mb-2 text-left" style="white-space: normal" data-toggle="collapse" href="#collapseReceiptAdjustmentInfoTable_{{ allAdjustmentEntitiesId }}" role="button" aria-expanded="false" aria-controls="collapseReceiptAdjustmentInfoTable">
+    <span class="fa fa-angle-double-down"></span> Show all used adjustments
+</a>
+<div class="collapse mb-2" id="collapseReceiptAdjustmentInfoTable_{{ allAdjustmentEntitiesId }}">
+    <div class="container-fluid">
+        <div class="row mb-0">
+            <div class="col-sm-12">
+                {# ReceiptAdjustmentsInfoTable(adjustments, title, currentAdjustmentId, showTotalAmount = true, showReceiptInfo, otherCells, otherHeaderCells ) #}
+                {{ ReceiptAdjustmentsInfoTable(allAdjustmentEntities,'') }}
+                {# {{ ReceiptAdjustmentsInfoTable(receipt.data.adjustments, '<h5 class="bg-light mb-0 border py-1">&nbsp;Adjustments</h5>', null, true, false) }} #}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+</div>
+{% endif %}

@@ -1,0 +1,113 @@
+{% extends "base.html.twig" %}
+
+{% use 'filter/filter_form.html.twig' with javascripts as filter_javascripts, filter as from_to_place_service_filter %}
+
+{% set titleValue = 'Receipt list' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+    
+{#    <button type="submit" form="appbundle_receiptForReportForm__id" class="btn btn-primary" value="create"><span fa-table>Create receipt report</button>
+#}    
+
+{% set pageTitleButtons %}
+{{ contentMacros.faButtonSubmit('fa-table', 'Create receipt report', 'btn-outline-primary ml-auto', receiptsForReportForm.vars.id) }}{{ contentMacros.addButton('receipt_newEdit', {}, '') }}
+{% endset %}
+{{  contentMacros.pageTitle(titleValue,  pageTitleButtons) }}
+    
+{{ block('from_to_place_service_filter') }}    
+<style type="text/css">
+    table.table td {
+        font-size: 0.97em;
+    }
+</style>
+
+{{ form_start(receiptsForReportForm, {'attr': {'id': receiptsForReportForm.vars.id}} ) }}
+<table class="table table-sm table-hover">
+    <tr>
+      <th scope="col" rowspan="2" class="align-top">#</th>
+      <th scope="col" colspan="3">Range of value</th>
+      <th scope="col" rowspan="2" class="align-top">Total</th>
+      <th scope="col" colspan="2">Date</th>
+      <th scope="col" rowspan="2" class="align-top text-center">Action</th>
+      <th scope="col" rowspan="2" class="align-top">Check</th>
+    </tr>
+    <tr>
+      <th scope="col">Begin</th>
+      <th scope="col">End</th>
+      <th scope="col">Value</th>
+      <th scope="col">Begin</th>
+      <th scope="col">End</th>
+    </tr>
+{% if receiptsForReportForm.receipt|length > 0 %}
+    {% for receiptView in receiptsForReportForm.receipt %}
+    {% set receipt = receiptsForReportForm.receipt.vars.choices[receiptView.vars.name] %}
+    <tr>
+        <th scope="row" rowspan="2">{{ loop.index }}</th>
+        <td>{{ receipt.data.valueB }}</td>
+        <td>{{ receipt.data.valueE }}</td>
+        <td>{{ receipt.data.value }}</td>
+        <td>{{ receipt.data.total }}</td>
+        <td>{{ receipt.data.dateB is empty ? "" : receipt.data.dateB|date("m/d/Y") }}</td>
+        <td>{{ receipt.data.dateE is empty ? "" : receipt.data.dateE|date("m/d/Y") }}</td>
+        <td>
+            {# buttonA(path, params={}, imageUrl,  otherContent = '', a_class = null, img_class = null, title = null ) #}
+          {{ contentMacros.buttonsEditDelete('receipt_newEdit',{'id': receipt.data.id},'receipt_delete',{'id': receipt.data.id}, contentMacros.buttonA( 'receipt_adjustment_new', {'receiptId': receipt.data.id}, "/icoset/png/24x24/Tune.png", '', null, null, 'Add adjustment') ) }}
+        </td>
+        <td class="text-center">
+            {{ form_widget(receiptView) }}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="8" class="border px-1 py-2 {{ receipt.data.adjustments|length == 0 ? ' bg-light' : '' }}">
+            <div class="container-fluid">
+                <div class="row">
+{#                    <div class="col col-sm-2{{ receipt.data.adjustments|length == 0 ? ' d-none' : '' }}">
+                        <p class="mt-2">
+                        </p>
+                    </div>
+#}                  <div class="col-11">
+                    {% set tariffInfo %}
+                        <strong>Place: </strong>{{ receipt.data.tariff.place.name }}, <strong>Service: </strong>{{ receipt.data.tariff.service.name }}, <strong>Tariff: </strong>{{ "( " ~ receipt.data.tariff.unitValue ~ ' per ' ~ receipt.data.tariff.unitName ~ " )" }}
+                    {% endset %}
+                    {% if receipt.data.adjustments|length > 0 %}
+                        <a class="btn btn-primary ml-1 my-1 text-left text-wrap" style="white-space: normal" data-toggle="collapse" href="#collapseReceiptAdjustmentInfoTable_{{ receipt.data.id }}" role="button" aria-expanded="false" aria-controls="collapseReceiptAdjustmentInfoTable">
+                            <span class="fa fa-angle-double-down"></span> {{ tariffInfo }}
+                        </a>
+                    {% else %}
+                        {{ tariffInfo }}
+                    {% endif %}    
+                    </div>
+                </div>
+                {% if receipt.data.adjustments|length > 0 %}
+                {% from 'macros/receipt_adjustment_macros.html.twig' import ReceiptAdjustmentsInfoTable %}
+                <div class="collapse" id="collapseReceiptAdjustmentInfoTable_{{ receipt.data.id }}">
+                    <div class="container-fluid">
+                        <div class="row mb-0">
+                            <div class="col-sm-12">
+                                {# ReceiptAdjustmentsInfoTable(adjustments, title, currentAdjustmentId, showTotalAmount = true, showReceiptInfo, otherCells, otherHeaderCells ) #}
+                                {{ ReceiptAdjustmentsInfoTable(receipt.data.adjustments, '<h5 class="bg-light mb-0 border py-1">&nbsp;Adjustments</h5>', null, true, false) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="10" style="text-align: center">Receipts' data is empty</td>
+    </tr>
+{% endif %}    
+</table>
+{{ form_rest(receiptsForReportForm) }}
+{{ form_end(receiptsForReportForm) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ block('filter_javascripts') }}
+{% endblock %}

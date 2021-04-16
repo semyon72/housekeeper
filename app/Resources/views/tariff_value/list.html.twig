@@ -1,0 +1,44 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+    
+{% set titleValue = 'Tariff\'s values list' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+{{ contentMacros.pageTitleWithAddButton(titleValue,'tariffvalue_new',{'tariffId': currentTariff.id}) }}
+{# information about main service whom belongs these parameters #}
+{% use 'tariff_value/commonBlocks.html.twig' %}
+{{ block('currentTariffMessage') }}
+<table class="table table-sm table-hover">
+    <tr>
+        <th scope="col" rowspan="2">#</th>
+        <th scope="col" colspan="3">Value of differential tarriffs</th>
+        <th scope="col" rowspan="2" class="text-center">Action</th>
+    </tr>
+    <tr>
+        <th scope="col">From</th>
+        <th scope="col">Up to</th>
+        <th scope="col">Value of unit</th>
+    </tr>
+{% if tariffValues and tariffValues|length > 0 %} 
+{% for tariffValue in tariffValues %}
+    <tr>
+        <th scope="row">{{ loop.index }}</td>
+        <td>{{ tariffValue.valueFrom }}</td>
+        <td>{{ tariffValue.valueTo }}</td>
+        <td>{{ tariffValue.unitValue }}</td>
+        <td>
+            {{ contentMacros.buttonsEditDelete('tariffvalue_edit',{'id': tariffValue.id},'tariffvalue_delete',{'id': tariffValue.id}) }}            
+        </td>
+    </tr>
+{% endfor %}
+{% else %}
+    <tr>
+        <td colspan="5" style="text-align: center">Set of differential tariffs is empty</td>
+    </tr>
+{% endif %}
+</table>
+{% if currentTariff is defined and currentTariff %} 
+{% endif %}
+{% endblock %}

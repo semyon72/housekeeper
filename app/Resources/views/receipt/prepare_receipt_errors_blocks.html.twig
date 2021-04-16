@@ -1,0 +1,241 @@
+{% block errorDescriptionDefaultWrapper %}
+<div class="alert alert-danger" role="alert">
+  <h4 class="alert-heading">{{ errorMessage }}</h4>
+  {% if errorDescription is defined %}
+  <p>{{ errorDescription }}</p>
+  {% endif %}
+  {% if errorConclusion is defined %}
+  <hr>
+  <p class="mb-0">{{ errorConclusion }}</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block START_RECEIPT_NOT_FOUND_ERROR %}
+    
+    {% set errorDescription  %}
+        This error happens when you have not any records in receipts that
+        can be confirmed (have corresponding value) by data of counter include the place and kind of service.
+    {% endset %}
+    {% set errorConclusion %}
+        For resolve this isssue you can manualy create appropriate record in "Receipts"
+        part or push button "Create receipt" in right side of table in "Action" column
+        where proposed counters which can be used as base for first receipt.
+        That first receipt will used only for dummy purposes that is why you can set 
+        total in value like 0.01.   
+    {% endset %}
+    
+    {{ block('errorDescriptionDefaultWrapper') }}
+    {% set counters = calculator.counter %}
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Place description</th>
+                <th scope="col">Service's description</th>
+                <th scope="col">Value</th>
+                <th scope="col">Value' name</th>
+                <th scope="col">On date</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% if counters %} 
+        {% for counter in counters|reverse %}
+        <tr>
+            <th scope="row">{{ loop.index }}</td>
+            <td>{{ counter.place.name }}</td>
+            <td>{{ counter.service.name }}</td>
+            <td>{{ counter.value }}</td>
+            <td>{{ counter.valueName }}</td>
+            <td>{{ counter.onDate is empty ? "" : counter.onDate|date("d.m.Y:H:i:s") }}</td>
+            <td>
+                <a class="btn btn-sm btn-outline-primary active" aria-pressed="true" href="{{ path('receipt_createFromCounter',{'counterId': counter.id}) }}">Create receipt</a>
+            </td>
+        </tr>    
+    {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="7">
+                Oooops. Dataset is empty
+            </td>
+        </tr>
+    {% endif %}
+        </tbody>
+    </table>    
+{% endblock START_RECEIPT_NOT_FOUND_ERROR %}
+
+{% block receiptShortInformation %}    
+<table class="table table-bordered">
+  <thead>
+    <tr>
+        <th scope="col" colspan="2">Receipt information
+        {% if counter is defined and counter is not null %}
+            <a href="{{ path('receipt_newEdit',{'id': receipt ? receipt.id}) }}" class="btn btn-sm btn-primary float-right">Go to receipt</a>
+        {% endif %}
+        </th>
+    </tr>
+  </thead>
+  <tbody>
+{% if receipt is defined and receipt is not null %}    
+    <tr><td scope="row" colspan="2"><strong>Place:</strong><span class='ml-4'>{{ receipt ? receipt.tariff.place.name }}</span></td></tr>
+    <tr><td scope="row" colspan="2"><strong>Service:</strong><span class='ml-4'>{{ receipt ? receipt.tariff.service.name }}</span></td></tr>
+    <tr><td scope="row" colspan="2"><strong>Tariff:</strong><span class='ml-4'>{{ receipt ? receipt.tariff.unitValue ~ ' ( per \'' ~ receipt.tariff.unitName ~ '\' )' }}</span></td></tr>
+    <tr>
+        <td scope="row" ><strong>Value begin:</strong><span class='ml-4'>{{ receipt ? receipt.valueB  }}</span></td>
+        <td><strong>Value end:</strong><span class='ml-4'>{{ receipt ? receipt.valueE }}</span></td>
+    </tr>
+    <tr>
+        <td scope="row"><strong>Value:</strong><span class='ml-4'>{{ receipt ? receipt.value }}</span></td>
+        <td><strong>Total:</strong><span class='ml-4'>{{ receipt ? receipt.total }}</span></td>
+    </tr>
+    <tr>
+        <td scope="row"><strong>Date begin:</strong><p class='ml-4'>{{ receipt ? receipt.dateB|date('d.m.Y H:i:s') }}</p></td>
+        <td><strong>Date end:</strong><p class='ml-4'>{{ receipt ? receipt.dateE|date('d.m.Y H:i:s') }}</p></td>
+    </tr>
+{% else %}
+    <tr>
+        <td scope="row" colspan="2">
+            Oooops. Dataset is empty
+        </td>
+    </tr>
+{% endif %}
+  </tbody>
+</table>
+{% endblock receiptShortInformation %}
+
+
+{% block counterShortInformation %}    
+<table class="table table-bordered">
+  <thead>
+    <tr>
+        <th scope="col" colspan="2">Counter information
+        {% if counter is defined and counter is not null %}
+            <a href="{{ path('counter_newEdit',{'id': counter ? counter.id}) }}" class="btn btn-sm btn-primary float-right">Go to counter</a>
+        {% endif %}
+        </th>
+    </tr>
+  </thead>
+  <tbody>
+{% if counter is defined and counter is not null %}    
+    <tr><td scope="row" colspan="2"><strong>Place:</strong><span class='ml-4'>{{ counter ? counter.place.name }}</span></td></tr>
+    <tr><td scope="row" colspan="2"><strong>Service:</strong><span class='ml-4'>{{ counter ? counter.service.name }}</span></td></tr>
+    <tr>
+        <td scope="row" ><strong>Value:</strong><span class='ml-4'>{{ counter ? counter.value  }}</span></td>
+        <td><strong>Value name:</strong><span class='ml-4'>{{ counter ? counter.valueName }}</span></td>
+    </tr>
+    <tr>
+        <td scope="row" colspan="2"><strong>Date:</strong><p class='ml-4'>{{ counter ? counter.onDate|date('d.m.Y H:i:s') }}</p></td>
+    </tr>
+{% else %}
+    <tr>
+        <td scope="row" colspan="2">
+            Oooops. Dataset is empty
+        </td>
+    </tr>
+{% endif %}
+  </tbody>
+</table>
+{% endblock counterShortInformation %}
+
+
+{% block COUNTER_FOR_RECEIPT_NOT_FOUND_ERROR %}
+    {% set errorDescription  %}
+        This error happens when you have some record (last by date) in receipts
+        that can't be confirmed (have not corresponding value) by data of counter
+        include the place and kind of service. Or counters not exist for same
+        place and kind of service at all.
+    {% endset %}
+    {% set errorConclusion %}
+        For resolve this issue you can manually synchronize appropriate record in
+        "Receipts" by data of end value with corresponding counter. Or if this
+        happens at begin of work you can remove this reciept, create appropriate
+        record for counter and then after you will have error "Start record
+        wasnt found in "Receipts" for counters ...... " you will proposed to
+        create appropriate first record for receipt. In any way, pay attension
+        when you will do it.
+    {% endset %}
+    
+    {{ block('errorDescriptionDefaultWrapper') }}
+    {% set receipt = ( calculator.receipt is defined and calculator.receipt|length > 0 ? calculator.receipt[0] ) %}
+    {% set counters = ( calculator.counter is defined and calculator.counter|length > 0 ? calculator.counter ) %}
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          {{ block('receiptShortInformation') }}
+        </div>
+        <div class="col-sm">
+            {% for counter in counters|reverse %}
+                {{ block('counterShortInformation') }}
+            {% endfor %}
+          <div class="alert alert-warning" role="alert">Make sure <strong>'Value'</strong> must be exact equal to <strong>'Value end'</strong> in 'Receipt information' for counters.</div>
+        </div>
+      </div>
+    </div>    
+    
+{% endblock COUNTER_FOR_RECEIPT_NOT_FOUND_ERROR %}
+
+{% block COUNTER_FOR_RECEIPT_MUST_BE_EXACT_ONE_ERROR %}
+    {{ block('errorDescriptionDefaultWrapper') }}
+{% endblock COUNTER_FOR_RECEIPT_MUST_BE_EXACT_ONE_ERROR %}
+
+{% block COUNTER_FOR_END_RANGE_MUST_BE_ERROR %}
+    {{ block('errorDescriptionDefaultWrapper') }}
+{% endblock COUNTER_FOR_END_RANGE_MUST_BE_ERROR %}
+
+{% block COUNTER_RANGE_BEGIN_VALUE_MORE_END_VALUE_ERROR %}
+    {{ block('errorDescriptionDefaultWrapper') }}
+{% endblock COUNTER_RANGE_BEGIN_VALUE_MORE_END_VALUE_ERROR %}
+
+{% block COUNTERS_FOR_CREATE_THE_RECEIPT_WAS_NOT_FOUND_ERROR %}
+    {{ block('errorDescriptionDefaultWrapper') }}
+    {% set receipt = ( calculator.receipt is defined and calculator.receipt|length > 0 ? calculator.receipt[0] ) %}
+    {% set counters = ( calculator.counter is defined and calculator.counter|length > 0 ? calculator.counter ) %}
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          {{ block('receiptShortInformation') }}
+        </div>
+        <div class="col-sm">
+        {% if counters|length == 0 %}
+            {{ block('counterShortInformation') }}
+        {% else %}
+            {% for counter in counters|reverse %}
+            {{ block('counterShortInformation') }}
+            {% endfor %}
+        {% endif %}
+        </div>
+      </div>
+    </div>    
+{% endblock COUNTERS_FOR_CREATE_THE_RECEIPT_WAS_NOT_FOUND_ERROR %}
+
+{% block APPROPRIATE_TARIFF_WAS_NOT_FOUND_ERROR %}
+    {{ block('errorDescriptionDefaultWrapper') }}
+{% endblock APPROPRIATE_TARIFF_WAS_NOT_FOUND_ERROR %}
+
+
+{% block SAME_TIME_RANGE_WAS_RECEIPTED_ERROR %}
+    {{ block('errorDescriptionDefaultWrapper') }}
+{% endblock SAME_TIME_RANGE_WAS_RECEIPTED_ERROR %}
+
+
+{% block SERVICES_ON_WHICH_CURRENT_ONE_DEPENDS_MUST_EXIST_ERROR %}
+    {{ block('errorDescriptionDefaultWrapper') }}
+{% endblock SERVICES_ON_WHICH_CURRENT_ONE_DEPENDS_MUST_EXIST_ERROR %}
+
+
+{% block RECEIPTS_ON_WHICH_CURRENT_ONE_DEPENDS_MUST_EXIST_ERROR %}
+    {{ block('errorDescriptionDefaultWrapper') }}
+{% endblock RECEIPTS_ON_WHICH_CURRENT_ONE_DEPENDS_MUST_EXIST_ERROR %}
+
+
+{% block PROPOSED_RECEIPT_VALUE_BEGIN_LESS_THAN_START_RECEIPT_ERROR %}
+    {{ block('errorDescriptionDefaultWrapper') }}
+{% endblock PROPOSED_RECEIPT_VALUE_BEGIN_LESS_THAN_START_RECEIPT_ERROR %}
+
+
+{% block PROPOSED_RECEIPT_VALUE_END_LESS_THAN_START_RECEIPT_ERROR %}
+    {{ block('errorDescriptionDefaultWrapper') }}
+{% endblock PROPOSED_RECEIPT_VALUE_END_LESS_THAN_START_RECEIPT_ERROR %}

@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %}
+
+{% block title %}AppBundle:Receipt:prepare{% endblock %}
+
+{% block body %}
+<h1>Welcome to the Receipt:prepare page</h1>
+{{ dump(preparedEntries) }}
+{{ dump(placeServiceEntry) }}
+
+{{ dump(calculator) }}
+
+{% if calculator.valid %}
+{% include 'receipt/receipt_compare_table.html.twig' with {'receipts': calculator.result} %}
+{% else %}
+{% include 'receipt/prepare_receipt_error.html.twig' with {'calculator': calculator} %}
+{% endif %}
+
+{{ form_start(placeServiceEntryForm) }}
+{{ form_errors(placeServiceEntryForm) }}
+{{ form_widget(placeServiceEntryForm.placeServeiceEntry) }}
+<div class="form-row">
+    <div class="form-group col-sm-6">
+    {{ form_widget(placeServiceEntryForm.skip) }}
+    </div>
+    <div class="form-group col-sm-6 text-right">
+    {% if 'confirm' in placeServiceEntryForm|keys %}
+        {{ form_widget(placeServiceEntryForm.confirm) }}
+    {% else %}
+        {% if calculator.counter|length > 0 %}
+        <a href="{{ path('counter_newEdit', {'id': calculator.counter[0].id} ) }}" class="btn btn-primary btn" role="button" aria-pressed="true">Go to last counter</a>
+        {% endif %}
+    {% endif %}
+    </div>
+</div>
+{{ form_end(placeServiceEntryForm) }}
+{% endblock %}

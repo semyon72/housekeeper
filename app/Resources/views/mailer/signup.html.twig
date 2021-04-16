@@ -1,0 +1,32 @@
+<h4>Hello <strong><em>{{ confirmEmailForm.vars.value.email }}</em></strong>,</h4>
+
+<p>
+   This is part of email address confirmation process. This letter contains
+   importent things that you must do for finish process successful.
+   Using link below you will redirected to form of confirmation where
+   you must fill your <strong><em>email</em></strong> and <strong><em>one time password</em></strong> in appropriate
+   fields of confirmation form and submit them. But, one very importent thing is.
+   Remember that you must do it befor <strong><em>date expire of one time password</em></strong>
+   this one time password also pointed below.
+</p>
+
+<a href="{{ absolute_url(path('login_confirm_email')) }}">Click this link and you will be redirecting on email address confirmation form.</a>
+
+<dl>
+    <dt><dfn>One time password:</dfn></dt>
+    <dd><strong>{{ confirmEmailForm.vars.value.oneTimePass }}</strong></dd>
+    <dt><dfn>Date expired:</dfn></dt>
+    <dd><strong>{{ otpDateExp|date('Y-M-d H:i:s') }}</strong></dd>
+</dl>
+
+<p>Or if your messanger supports, just click <em>Confirm email</em> button</p>
+{{ form_start(confirmEmailForm, { 'action': absolute_url(path('login_confirm_email')) } ) }}
+    <input type="hidden" name="{{ confirmEmailForm.vars.full_name }}[email]"  value="{{ confirmEmailForm.vars.value.email }}">
+    <input type="hidden" name="{{ confirmEmailForm.vars.full_name }}[oneTimePass]"  value="{{ confirmEmailForm.vars.value.oneTimePass }}">
+    {{ form_widget(confirmEmailForm._token) }}
+    <button type="submit">Confirm email</button>
+{{ form_end(confirmEmailForm, {'render_rest': false}) }}
+    
+    
+<p>This message was sent to you because you or someone other pointed this email in registration form.</p>
+<strong><em>If you didn't do it then You musn't do any actions</em></strong>

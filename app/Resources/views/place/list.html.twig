@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% set titleValue = 'Place list' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+{{ contentMacros.pageTitleWithAddButton(titleValue,'place_newEdit') }}
+<table class="table table-sm table-hover">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Place description</th>
+        <th scope="col">Geoposition</th>
+        <th scope="col" class="text-center">Action</th>
+    </tr>
+{% if places %} 
+{% for place in places %}
+    <tr>
+        <th scope="row">{{ loop.index }}</td>
+        <td>{{ place.name }}</td>
+        <td>{{ place.geo }}</td>
+        <td>
+            {{ contentMacros.buttonsEditDelete('place_newEdit',{'id': place.id},'place_delete',{'id': place.id}) }}            
+        </td>
+    </tr>
+{% endfor %}
+{% else %}
+    <tr>
+        <td colspan="4" style="text-align: center">Places' set is empty</td>
+    </tr>
+{% endif %}
+</table>
+{% endblock body %}

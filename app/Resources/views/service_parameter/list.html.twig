@@ -1,0 +1,52 @@
+{# empty Twig template #}
+{% extends 'base.html.twig' %}
+    
+{% set titleValue = 'Service\'s parameters list' %}
+{%- block title -%}{{ parent() }} {{ titleValue }}{% endblock %}
+
+{% import 'macros/content_macros.html.twig' as contentMacros  %}
+{% block body %}
+{{ contentMacros.pageTitleWithAddButton(titleValue,'serviceparameter_new',{'serviceId': currentService.id}) }}
+{# information about main service whom belongs these parameters #}
+<div class="alert alert-info" role="alert">
+    <cite>Current service is - "{{ currentService is defined ? currentService.name : 'not valid' }}"</cite>
+</div>
+<table class="table table-sm table-hover">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Parameter of service</th>
+        <th scope="col" class="text-center">Action</th>
+    </tr>
+{% if parameters %} 
+{% for parameter in parameters %}
+    <tr>
+        <th scope="row">{{ loop.index }}</td>
+        {% if services is defined and services %}  
+        <td>{% set parameterIsServiceName %}
+                {% for key, serviceName in services if (parameter.parameter|length ==  key|length) and (parameter.parameter ==  key) %}
+                    * {{ serviceName }} *
+                {% endfor %}
+            {% endset %}    
+            {% if parameterIsServiceName|trim is not empty %}
+            {{ parameterIsServiceName }}              
+            {% else %}
+            {{ parameter.parameter }}
+            {% endif %}
+        </td>
+        {% else %}
+        <td>{{ parameter.parameter }}</td>
+        {% endif %}
+        <td>
+            {{ contentMacros.buttonsEditDelete('serviceparameter_edit',{'id': parameter.id},'serviceparameter_delete',{'id': parameter.id}) }}            
+        </td>
+    </tr>
+{% endfor %}
+{% else %}
+    <tr>
+        <td colspan="3" style="text-align: center">Parameter' set is empty</td>
+    </tr>
+{% endif %}
+</table>
+{% if currentService is defined %} 
+{% endif %}
+{% endblock %}
